@@ -6,8 +6,9 @@ import (
 	"strings"
 	"time"
 
-	"github.com/Pobepto/brvs-client/server/models"
 	"github.com/dgrijalva/jwt-go"
+	config "github.com/pobepto/brvs-client/server/config"
+	"github.com/pobepto/brvs-client/server/models"
 	"github.com/thedevsaddam/govalidator"
 )
 
@@ -25,7 +26,9 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		tokenString := r.Header.Get("Authorization")
+		authString := r.Header.Get("Authorization")
+		tokenString := authString[7:len(authString)]
+
 		if len(tokenString) == 0 {
 			w.WriteHeader(http.StatusUnauthorized)
 			return
@@ -118,4 +121,20 @@ func PostLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	json.NewEncoder(w).Encode(models.Token{Token: tokenString, Date: expirationTime})
+}
+
+// GetBRVSTransactions method for getting txs from brvs server
+func GetBRVSTransactions(w http.ResponseWriter, r *http.Request) {
+	res, err := http.Get(config.Configuration.BrvsURL + "/brvs/rest/transactions")
+
+	if err != nil {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
+	defer res.Body.Close()
+
+	var result map[string]interface{}
+
+	json.NewDecoder(res.Body).Decode(&result)
+	json.NewEncoder(w).Encode(result)
 }

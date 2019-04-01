@@ -5,6 +5,7 @@ import (
 	"net/http"
 
 	"github.com/gorilla/mux"
+	config "github.com/pobepto/brvs-client/server/config"
 	"github.com/pobepto/brvs-client/server/handlers"
 )
 
@@ -21,6 +22,10 @@ func NewRouter() *mux.Router {
 		Methods("POST")
 
 	router.
+		HandleFunc("/api/transactions", handlers.GetBRVSTransactions).
+		Methods("GET")
+
+	router.
 		PathPrefix("/").
 		Handler(http.FileServer(http.Dir("." + staticDir)))
 	return router
@@ -28,6 +33,8 @@ func NewRouter() *mux.Router {
 
 // main function to boot up everything
 func main() {
+	config.LoadConfig()
+
 	router := NewRouter()
 	middleware := handlers.AuthMiddleware(router)
 	cors := handlers.CorsMiddleware(middleware)

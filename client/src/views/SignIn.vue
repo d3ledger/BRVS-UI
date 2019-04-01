@@ -1,8 +1,8 @@
 <template>
   <el-container class="auth-container">
     <div class="auth-block">
-      <img id="logo" src="@/assets/logo.png" alt="Logo"/>
-      <div class="subtitle">BRVS UI</div>
+      <img id="logo" src="@/assets/logo.svg" alt="Logo"/>
+      <div class="subtitle">BRVS Client</div>
       <el-form :model="form" :rules="rules" ref="loginForm">
         <el-form-item prop="username">
           <el-input
@@ -23,8 +23,8 @@
         </el-form-item>
         <el-form-item class="auth-button-container">
           <el-button
-            class="auth-button fullwidth black"
-            type="primary"
+            class="auth-button fullwidth btn-red"
+            type="danger"
             @click="onSubmit"
             :loading="isLoading"
           >
@@ -69,7 +69,7 @@ export default {
         this.login(this.form)
           .then(() => {
             this.$message.success('Success!')
-            this.$router.push('/transactions')
+            this.$router.push('/')
           })
           .catch(() => this.$message.error('Ops...Error!'))
           .finally(() => {

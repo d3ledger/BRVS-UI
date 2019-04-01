@@ -1,0 +1,10 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 18 20">
+    <defs>
+        <style>
+            .cls-1{opacity:.24}.cls-2{fill:#00111f}
+        </style>
+    </defs>
+    <g id="icons8-exit" class="cls-1" transform="translate(-5 -3)">
+        <path id="Path_549" d="M5 3v20h14.068v-4.471l-.855-.817-.659-.673H17.5v4.423H6.563V4.538H17.5V9.01l.708-.721.855-.817V3zm14.337 6.37l-1.123 1.106L20 12.231h-9.529v1.538H20l-1.783 1.755 1.123 1.106 3.126-3.077L23 13l-.537-.553z" class="cls-2" data-name="Path 549"/>
+    </g>
+</svg>

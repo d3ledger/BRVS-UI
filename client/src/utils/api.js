@@ -1,27 +1,53 @@
-import Vue from 'vue'
 import axios from 'axios'
+import storageUtil from './storage-util'
 
 const API_URL = process.env.VUE_APP_API || 'http://localhost:8000/api'
 
 const SERVER_AXIOS = axios.create({
-  baseURL: API_URL
+  baseURL: API_URL,
+  headers: {
+    common: {
+      Authorization: `Bearer ${storageUtil.getItem('user-token')}`
+    }
+  }
 })
 
 function handleError (err) {
   if (err.response && err.response.status === 401) {
     console.log('Error! Bad token.')
-    Vue.$router.push('/signup')
+    storageUtil.removeItem('token')
   }
   console.error(err)
   throw err
 }
 
+function setAuthHeader (token) {
+  storageUtil.setItem('token', token)
+  SERVER_AXIOS.defaults.headers.common['Authorization'] = `Bearer ${token}`
+}
+
+const isLoggedIn = () => {
+  return storageUtil.getItem('token') || ''
+}
+
 const login = (axios) => (form) => {
   return axios.post('/login', form)
-    .then(({ data }) => data.token)
+    .then(({ data }) => {
+      setAuthHeader(data.token)
+      return data.token
+    })
+    .catch(e => handleError(e))
+}
+
+const getTransactions = (axios) => () => {
+  return axios.get('/brvs/transacions')
+    .then(({ data }) => data)
     .catch(e => handleError(e))
 }
 
 export default {
-  login: login(SERVER_AXIOS)
+  isLoggedIn,
+
+  login: login(SERVER_AXIOS),
+  getTransactions: getTransactions(SERVER_AXIOS)
 }

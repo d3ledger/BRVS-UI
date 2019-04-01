@@ -168,4 +168,12 @@ tr.selected-row td {
   color: #66bb6a;
   cursor: pointer;
 }
+
+.btn-red {
+  background-color: #e43e33 !important;
+  border-color: #e43e33 !important;
+}
+.btn-red:hover {
+  opacity: 0.8;
+}
 </style>

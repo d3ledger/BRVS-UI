@@ -18,12 +18,19 @@ const types = flow(
 ])
 
 function initialState () {
-  return {}
+  return {
+    username: '',
+    token: ''
+  }
 }
 
 const state = initialState()
 
-const getters = {}
+const getters = {
+  username (state) {
+    return state.username
+  }
+}
 
 function handleError (state, err) {
   console.error(err)

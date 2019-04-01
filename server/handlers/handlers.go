@@ -25,20 +25,15 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			return
 		}
 
-		c, err := r.Cookie("token")
-		if err != nil {
-			if err == http.ErrNoCookie {
-				w.WriteHeader(http.StatusUnauthorized)
-				return
-			}
-			w.WriteHeader(http.StatusBadRequest)
+		tokenString := r.Header.Get("Authorization")
+		if len(tokenString) == 0 {
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 
-		tknStr := c.Value
 		claims := &models.Claims{}
 
-		tkn, err := jwt.ParseWithClaims(tknStr, claims, func(token *jwt.Token) (interface{}, error) {
+		tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
 		if !tkn.Valid {
@@ -53,7 +48,25 @@ func AuthMiddleware(next http.Handler) http.Handler {
 			w.WriteHeader(http.StatusBadRequest)
 			return
 		}
-		defer next.ServeHTTP(w, r)
+		next.ServeHTTP(w, r)
+	})
+}
+
+// CorsMiddleware should allow to make cors requests
+func CorsMiddleware(next http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		if r.Method == "OPTIONS" {
+			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
+			w.Header().Set("Access-Control-Allow-Headers:", "Origin, Content-Type, X-Auth-Token, Authorization")
+			w.Header().Set("Content-Type", "application/json")
+			return
+		}
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
+		w.Header().Set("Access-Control-Allow-Headers:", "Origin, Content-Type, X-Auth-Token, Authorization")
+		w.Header().Set("Content-Type", "application/json")
+		next.ServeHTTP(w, r)
 	})
 }
 
@@ -104,9 +117,5 @@ func PostLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	http.SetCookie(w, &http.Cookie{
-		Name:    "token",
-		Value:   tokenString,
-		Expires: expirationTime,
-	})
+	json.NewEncoder(w).Encode(models.Token{Token: tokenString, Date: expirationTime})
 }

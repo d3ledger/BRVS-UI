@@ -1,6 +1,8 @@
 package models
 
 import (
+	"time"
+
 	"github.com/dgrijalva/jwt-go"
 )
 
@@ -11,7 +13,8 @@ type Auth struct {
 }
 
 type Token struct {
-	Token string `json:"token"`
+	Token string    `json:"token"`
+	Date  time.Time `json:"date"`
 }
 
 type Claims struct {

@@ -13,22 +13,20 @@ const types = flow(
   map(x => [x, x]),
   fromPairs
 )([
-  'SIGNIN',
-  'LOGOUT'
+  'GET_PENDING_TRANSACTIONS'
 ])
 
 function initialState () {
   return {
-    username: '',
-    token: ''
+    pendingTransactions: []
   }
 }
 
 const state = initialState()
 
 const getters = {
-  username (state) {
-    return state.username
+  pendingTransactions (state) {
+    return state.pendingTransactions
   }
 }
 
@@ -46,32 +44,22 @@ const mutations = {
     })
   },
 
-  [types.SIGNIN_REQUEST] (state) {},
-  [types.SIGNIN_SUCCESS] (state, { token, username }) {
-    state.token = token
-    state.username = username
+  [types.GET_PENDING_TRANSACTIONS_REQUEST] (state) {},
+  [types.GET_PENDING_TRANSACTIONS_SUCCESS] (state, txs) {
+    state.pendingTransactions = txs
   },
-  [types.SIGNIN_FAILURE] (state, err) {
-    handleError(state, err)
-  },
-
-  [types.LOGOUT_REQUEST] (state) {},
-  [types.LOGOUT_SUCCESS] (state) {},
-  [types.LOGOUT_FAILURE] (state, err) {
+  [types.GET_PENDING_TRANSACTIONS_FAILURE] (state, err) {
     handleError(state, err)
   }
 }
 
 const actions = {
-  login ({ commit }, { username, password }) {
-    commit(types.SIGNIN_REQUEST)
-    return serverApi.login({ username, password })
-      .then(token => commit(types.SIGNIN_SUCCESS, {
-        username,
-        token
-      }))
+  getPendingTransactions ({ commit }) {
+    commit(types.GET_PENDING_TRANSACTIONS_REQUEST)
+    return serverApi.getPendingTransactions()
+      .then(txs => commit(types.GET_PENDING_TRANSACTIONS_SUCCESS, txs))
       .catch(err => {
-        commit(types.SIGNIN_FAILURE, err)
+        commit(types.GET_PENDING_TRANSACTIONS_FAILURE, err)
         throw err
       })
   }

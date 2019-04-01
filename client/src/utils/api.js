@@ -39,8 +39,8 @@ const login = (axios) => (form) => {
     .catch(e => handleError(e))
 }
 
-const getTransactions = (axios) => () => {
-  return axios.get('/brvs/transacions')
+const getPendingTransactions = (axios) => () => {
+  return axios.get('/transactions')
     .then(({ data }) => data)
     .catch(e => handleError(e))
 }
@@ -49,5 +49,5 @@ export default {
   isLoggedIn,
 
   login: login(SERVER_AXIOS),
-  getTransactions: getTransactions(SERVER_AXIOS)
+  getPendingTransactions: getPendingTransactions(SERVER_AXIOS)
 }

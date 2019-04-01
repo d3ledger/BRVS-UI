@@ -24,8 +24,8 @@
             sortable
             show-overflow-tooltip/>
           <el-table-column
-            label="Status"
-            prop="status"
+            label="Account ID"
+            prop="accountId"
             sortable
             show-overflow-tooltip/>
           <el-table-column
@@ -52,19 +52,41 @@ export default {
       search: ''
     }
   },
-  updated () {},
   computed: {
-    ...mapGetters([]),
+    ...mapGetters([
+      'pendingTransactions'
+    ]),
     searchedTransaction () {
-      const trx = this.pendingTransactions
+      const trx = this.pendingTransactions.map((tx) => {
+        const {
+          // eslint-disable-next-line
+          created_time,
+          // eslint-disable-next-line
+          creator_account_id,
+          quorum
+        } = tx.payload.reduced_payload
+        return {
+          time: created_time,
+          accountId: creator_account_id,
+          quorum
+        }
+      })
       return this.search
-        ? trx.filter(tx => tx)
+        ? trx.filter(tx =>
+          tx.toLowerCase().includes(
+            this.search.toLowerCase()
+          )
+        )
         : trx
     }
   },
-  created () {},
+  created () {
+    this.getPendingTransactions()
+  },
   methods: {
-    ...mapActions([]),
+    ...mapActions([
+      'getPendingTransactions'
+    ]),
     tableRowClassName ({ row }) {
       return row['uid'] === this.$route.params.id ? 'selected-row' : 'unselected-row'
     },

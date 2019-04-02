@@ -24,7 +24,7 @@ const defaultRouter = new Router({
           name: 'transactions',
           component: lazyView('Transactions'),
           children: [{
-            component: lazyComponent('Transactions/Card'),
+            component: lazyComponent('Transaction/Card'),
             path: ':id'
           }]
         }

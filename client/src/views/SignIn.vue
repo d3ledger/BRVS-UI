@@ -69,7 +69,7 @@ export default {
         this.login(this.form)
           .then(() => {
             this.$message.success('Success!')
-            this.$router.push('/')
+            this.$router.push('/transactions')
           })
           .catch(() => this.$message.error('Ops...Error!'))
           .finally(() => {

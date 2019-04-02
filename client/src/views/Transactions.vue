@@ -57,7 +57,7 @@ export default {
       'pendingTransactions'
     ]),
     searchedTransaction () {
-      const trx = this.pendingTransactions.map((tx) => {
+      const trx = this.pendingTransactions.map((tx, id) => {
         const {
           // eslint-disable-next-line
           created_time,
@@ -66,6 +66,8 @@ export default {
           quorum
         } = tx.payload.reduced_payload
         return {
+          // eslint-disable-next-line
+          id: `${created_time}_${id}`,
           time: created_time,
           accountId: creator_account_id,
           quorum
@@ -73,7 +75,7 @@ export default {
       })
       return this.search
         ? trx.filter(tx =>
-          tx.toLowerCase().includes(
+          tx.accountId.toLowerCase().includes(
             this.search.toLowerCase()
           )
         )
@@ -88,10 +90,10 @@ export default {
       'getPendingTransactions'
     ]),
     tableRowClassName ({ row }) {
-      return row['uid'] === this.$route.params.id ? 'selected-row' : 'unselected-row'
+      return row.id === this.$route.params.id ? 'selected-row' : 'unselected-row'
     },
     goToLink (row, column) {
-      if (row.uid) this.$router.push(`/transactions/${row.uid}`)
+      if (row.id) this.$router.push(`/transactions/${row.id}`)
     }
   }
 }

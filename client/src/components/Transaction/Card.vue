@@ -1,22 +1,53 @@
 <template>
   <div v-if="transaction" class="transaction-container">
-    <div class="column-title">Transaction information</div>
-    <div class="attributes">
-      <div class="attribute-row" v-for="(value, key) in user" :key="key">
-        <template>
-          <h3 class="attribute-card-title">{{ getLabelByKey(key) }}</h3>
-          <div class="attribute-card">
-            <p>{{ value || 'Empty' }}</p>
+    <div>
+      <div class="column-title">Transaction information</div>
+      <div>
+        <div class="attributes">
+          <div class="attribute-row">
+            <h3 class="attribute-card-title">Time</h3>
+            <div class="attribute-card">
+              <p>{{ reducedPayload.created_time }}</p>
+            </div>
           </div>
-        </template>
+        </div>
+        <div class="attributes">
+          <div class="attribute-row">
+            <h3 class="attribute-card-title">Account ID</h3>
+            <div class="attribute-card">
+              <p>{{ reducedPayload.creator_account_id }}</p>
+            </div>
+          </div>
+        </div>
+        <div class="attributes">
+          <div class="attribute-row">
+            <h3 class="attribute-card-title">Quorum</h3>
+            <div class="attribute-card">
+              <p>{{ reducedPayload.quorum }}</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="column-title">Transaction commands</div>
+      <div>
+        <div class="attributes">
+          <div class="attribute-row" v-for="(value, key) in commands" :key="key">
+            <template>
+              <h3 class="attribute-card-title">{{ value.title }}</h3>
+              <div class="attribute-card">
+                <p style="white-space: pre">{{ JSON.stringify(value.params, null, '    ') }}</p>
+              </div>
+            </template>
+          </div>
+        </div>
       </div>
     </div>
     <div class="footer_actions">
       <el-col :span="12">
-        <el-button type="danger" plain class="fullwidth" @click="approveWith">Approve</el-button>
+        <el-button type="empty" plain class="sora-button fullwidth" @click="approveWith">Approve</el-button>
       </el-col>
       <el-col :span="12">
-        <el-button type="primary" class="btn-red fullwidth" @click="rejectWith">Reject</el-button>
+        <el-button type="primary" class="sora-button btn-red fullwidth" @click="rejectWith">Reject</el-button>
       </el-col>
     </div>
   </div>
@@ -33,25 +64,38 @@ export default {
     }
   },
   computed: {
-    ...mapGetters([])
+    ...mapGetters([
+      'pendingTransactions'
+    ]),
+    reducedPayload () {
+      return this.transaction.payload.reduced_payload
+    },
+    commands () {
+      const commands = this.reducedPayload.commands
+      return commands.map(c => {
+        const title = Object.keys(c)[0]
+        return {
+          title,
+          params: c[title]
+        }
+      })
+    }
   },
   methods: {
     ...mapActions([]),
     approveWith () {
-      this.approveApplicationForm({ formId: this.user.uid })
-        .then(() => this.$message.success('Success, user approved'))
-        .catch(() => this.$message.error('Failed to approve user'))
-        .finally(() => this.getAllApplicationForms())
+      this.$message.success('Success, transaction approved')
     },
     rejectWith () {
-      this.rejectApplicationForm({ formId: this.user.uid })
-        .then(() => this.$message.success('Success, user rejected'))
-        .catch(() => this.$message.error('Failed to reject user'))
-        .finally(() => this.getAllApplicationForms())
+      this.$message.success('Success, transaction rejected')
     }
   },
   created () {
-    this.transaction = this.pendingTransaction.find(x => x['id'] === this.$route.params.id)
+    console.log(this.pendingTransactions)
+    if (this.pendingTransactions.length) {
+      const id = this.$route.params.id.split('_')[1]
+      this.transaction = this.pendingTransactions[id]
+    }
   }
 }
 </script>

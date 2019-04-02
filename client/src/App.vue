@@ -64,12 +64,12 @@ a:hover {
 .navigation-link.router-link-active {
   color: black;
   background-color: #f5f7fa;
-  color: #66bb6a;
+  color: #e43e33;
   padding: 12px;
 }
 
 .attributes {
-  padding: 1.5rem;
+  padding: 0 1.5rem;
   flex: 1;
   overflow-x: scroll;
 }
@@ -112,7 +112,7 @@ a:hover {
 }
 
 .attribute-card_link:hover {
-  color: #66bb6a;
+  color: #e43e33;
 }
 
 .attribute-card-title {
@@ -143,7 +143,7 @@ tr.unselected-row td {
 
 tr.selected-row td {
   background-color: #f5f7fa;
-  color: #66bb6a;
+  color: #e43e33;
   border-bottom: solid 0px;
   padding: 12px 0;
   cursor: pointer;
@@ -165,13 +165,25 @@ tr.selected-row td {
   font-size: 0.8rem;
 }
 .more-icon:hover {
-  color: #66bb6a;
+  color: #e43e33;
   cursor: pointer;
 }
 
+.sora-button {
+  background-color: #ffffff !important;
+  color: #000000            !important;
+  border: 0                   !important;
+  text-transform: uppercase   !important;
+  border-radius: 2px          !important;
+  font-size: 0.8rem           !important;
+  line-height: 1rem           !important;
+}
 .btn-red {
   background-color: #e43e33 !important;
   border-color: #e43e33 !important;
+}
+.sora-button.btn-red {
+  color: #ffffff !important;
 }
 .btn-red:hover {
   opacity: 0.8;

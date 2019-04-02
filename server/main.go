@@ -3,6 +3,7 @@ package main
 import (
 	"log"
 	"net/http"
+	"os"
 	"strings"
 
 	config "brvs-client/server/config"
@@ -62,8 +63,10 @@ func main() {
 	middleware := handlers.AuthMiddleware(router)
 	cors := handlers.CorsMiddleware(middleware)
 
+	log.Println("Server is running on port: " + port)
 	err := http.ListenAndServe(":"+port, cors)
 	if err != nil {
 		log.Fatal("Server error:", err)
+		os.Exit(1)
 	}
 }

@@ -5,9 +5,10 @@ import (
 	"net/http"
 	"strings"
 
+	config "brvs-client/server/config"
+	"brvs-client/server/handlers"
+
 	"github.com/gorilla/mux"
-	config "github.com/pobepto/brvs-client/server/config"
-	"github.com/pobepto/brvs-client/server/handlers"
 )
 
 const (

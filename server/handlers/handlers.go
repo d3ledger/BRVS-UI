@@ -6,9 +6,10 @@ import (
 	"strings"
 	"time"
 
+	config "brvs-client/server/config"
+	"brvs-client/server/models"
+
 	"github.com/dgrijalva/jwt-go"
-	config "github.com/pobepto/brvs-client/server/config"
-	"github.com/pobepto/brvs-client/server/models"
 	"github.com/thedevsaddam/govalidator"
 )
 

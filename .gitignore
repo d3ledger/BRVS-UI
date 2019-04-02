@@ -29,3 +29,8 @@ npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
 ### JAVASCRIPT ###
+
+
+### STATIC FOLDER ###
+server/static/*
+### STATIC FOLDER ###

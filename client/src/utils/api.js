@@ -14,7 +14,7 @@ const SERVER_AXIOS = axios.create({
 
 function handleError (err) {
   if (err.response && err.response.status === 401) {
-    console.log('Error! Bad token.')
+    console.error('Error! Bad token.')
     storageUtil.removeItem('token')
   }
   console.error(err)

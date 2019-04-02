@@ -91,7 +91,6 @@ export default {
     }
   },
   created () {
-    console.log(this.pendingTransactions)
     if (this.pendingTransactions.length) {
       const id = this.$route.params.id.split('_')[1]
       this.transaction = this.pendingTransactions[id]

@@ -1,8 +1,7 @@
 package config
 
 import (
-	"encoding/json"
-	"os"
+	"flag"
 )
 
 type ConfigurationStruct struct {
@@ -12,14 +11,9 @@ type ConfigurationStruct struct {
 var Configuration ConfigurationStruct
 
 func LoadConfig() {
-	file, err := os.Open("./server/config/config.json")
-	if err != nil {
-		return
-	}
+	BRVS := flag.String("BRVS-URL", "http://localhost:8080", "The IP address of BRVS service")
 
-	decoder := json.NewDecoder(file)
-	err = decoder.Decode(&Configuration)
-	if err != nil {
-		return
-	}
+	flag.Parse()
+
+	Configuration.BrvsURL = *BRVS
 }

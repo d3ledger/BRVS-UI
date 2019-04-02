@@ -39,16 +39,16 @@ func AuthMiddleware(next http.Handler) http.Handler {
 		tkn, err := jwt.ParseWithClaims(tokenString, claims, func(token *jwt.Token) (interface{}, error) {
 			return jwtKey, nil
 		})
-		if !tkn.Valid {
-			w.WriteHeader(http.StatusUnauthorized)
-			return
-		}
 		if err != nil {
 			if err == jwt.ErrSignatureInvalid {
 				w.WriteHeader(http.StatusUnauthorized)
 				return
 			}
 			w.WriteHeader(http.StatusBadRequest)
+			return
+		}
+		if !tkn.Valid {
+			w.WriteHeader(http.StatusUnauthorized)
 			return
 		}
 		next.ServeHTTP(w, r)
@@ -58,17 +58,20 @@ func AuthMiddleware(next http.Handler) http.Handler {
 // CorsMiddleware should allow to make cors requests
 func CorsMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if r.Method == "OPTIONS" {
+		if !config.Configuration.Production {
+			if r.Method == "OPTIONS" {
+				w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
+				w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
+				w.Header().Set("Access-Control-Allow-Headers:", "Origin, Content-Type, X-Auth-Token, Authorization")
+				w.Header().Set("Content-Type", "application/json")
+				return
+			}
 			w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
 			w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
 			w.Header().Set("Access-Control-Allow-Headers:", "Origin, Content-Type, X-Auth-Token, Authorization")
 			w.Header().Set("Content-Type", "application/json")
-			return
+			next.ServeHTTP(w, r)
 		}
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080")
-		w.Header().Set("Access-Control-Allow-Methods", "GET, POST, PATCH, PUT, DELETE, OPTIONS")
-		w.Header().Set("Access-Control-Allow-Headers:", "Origin, Content-Type, X-Auth-Token, Authorization")
-		w.Header().Set("Content-Type", "application/json")
 		next.ServeHTTP(w, r)
 	})
 }
@@ -134,6 +137,11 @@ func GetBRVSTransactions(w http.ResponseWriter, r *http.Request) {
 	defer res.Body.Close()
 
 	var result map[string]interface{}
+
+	if res.StatusCode != 200 {
+		w.WriteHeader(http.StatusServiceUnavailable)
+		return
+	}
 
 	json.NewDecoder(res.Body).Decode(&result)
 	json.NewEncoder(w).Encode(result)

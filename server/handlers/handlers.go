@@ -2,6 +2,7 @@ package handlers
 
 import (
 	"encoding/json"
+	"log"
 	"net/http"
 	"strings"
 	"time"
@@ -18,6 +19,8 @@ var jwtKey = []byte("gOFGzrmqoD")
 // AuthMiddleware should check requests for correct auth data
 func AuthMiddleware(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		log.Printf("%s %s %s\n", r.RemoteAddr, r.Method, r.URL)
+
 		if r.URL.Path == "/api/login" {
 			next.ServeHTTP(w, r)
 			return

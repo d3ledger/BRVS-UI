@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"net/http"
 	"os"
@@ -59,12 +58,6 @@ func NewRouter() *mux.Router {
 // main function to boot up everything
 func main() {
 	config.LoadConfig()
-
-	dir, pwdErr := os.Getwd()
-	if pwdErr != nil {
-		log.Fatal(pwdErr)
-	}
-	fmt.Println(dir, staticDir)
 
 	router := NewRouter()
 	middleware := handlers.AuthMiddleware(router)

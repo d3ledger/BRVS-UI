@@ -1,0 +1,53 @@
+# Build a static folder for server
+FROM node:8-alpine AS node8alpine
+RUN apk update
+RUN apk add git
+
+WORKDIR /go/src/github.com/d3ledger
+RUN git clone https://github.com/d3ledger/BRVS-UI.git
+WORKDIR /go/src/github.com/d3ledger/BRVS-UI/client
+RUN yarn install --frozen-lockfile
+WORKDIR /go/src/github.com/d3ledger/BRVS-UI
+RUN sh /go/src/github.com/d3ledger/BRVS-UI/build_static.sh
+
+
+RUN rm -rf /go/src/github.com/d3ledger/BRVS-UI/client
+
+
+# Use the `golang` image to build a statically linked binary.
+# https://blog.codeship.com/building-minimal-docker-containers-for-go-applications/
+FROM golang AS gobin
+
+ENV GO111MODULE=on
+
+WORKDIR /go/src/github.com/d3ledger/BRVS-UI
+COPY --from=node8alpine ["/go/src/github.com/d3ledger/BRVS-UI", "./"]
+
+# Use `go mod init` to ensure the correct versions of vendor dependencies are used.
+# https://github.com/golang/go/wiki/Modules#how-to-install-and-activate-module-support
+WORKDIR /go/src/github.com/d3ledger/BRVS-UI
+RUN go build ./...
+RUN go test ./...
+
+# Build a static binary for `brvs-ui`.
+WORKDIR /go/src/github.com/d3ledger/BRVS-UI/server
+ENV CGO_ENABLED='0' GOOS='linux' GOARCH='amd64'
+RUN go install
+
+# Use the `alpine` image to get `ca-certificates`.
+# FROM alpine AS certs
+# RUN apk update
+# RUN apk add ca-certificates
+
+# Build the image from the `scratch` (empty) container by copying the binary
+# and SSL certificates into an approapriate location.
+FROM scratch
+COPY --from=gobin ["/go/bin/server", "/bin/"]
+COPY --from=gobin ["/go/src/github.com/d3ledger/BRVS-UI/server/static", "/server/static/"]
+# COPY --from=certs ["/etc/ssl/*", "/etc/ssl/"]
+
+# # Advertise ports 8000.
+EXPOSE 8000
+
+# Start the `server` binary as the main process.
+ENTRYPOINT ["/bin/server"]

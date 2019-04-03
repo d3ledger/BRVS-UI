@@ -3,14 +3,19 @@ FROM node:8-alpine AS node8alpine
 RUN apk update
 RUN apk add git
 
+# Clone repository
 WORKDIR /go/src/github.com/d3ledger
 RUN git clone https://github.com/d3ledger/BRVS-UI.git
+
+# Install all javascript dependencies
 WORKDIR /go/src/github.com/d3ledger/BRVS-UI/client
 RUN yarn install --frozen-lockfile
+
+# Run script for generation static files
 WORKDIR /go/src/github.com/d3ledger/BRVS-UI
 RUN sh /go/src/github.com/d3ledger/BRVS-UI/build_static.sh
 
-
+# Remove client director
 RUN rm -rf /go/src/github.com/d3ledger/BRVS-UI/client
 
 

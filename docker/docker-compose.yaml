@@ -1,0 +1,19 @@
+version: '3.5'
+
+networks:
+  d3-brvsui:
+    name: d3-${SUBNET}
+    attachable: true
+
+services:
+  d3-brvsui-server:
+    build:
+      context: server/
+    container_name: d3-brvsui-server-${SUBNET}
+    entrypoint:
+      - server
+      - --brvs-url=http://example.com
+    networks:
+      - d3-brvsui
+    ports:
+      - 8000:8000

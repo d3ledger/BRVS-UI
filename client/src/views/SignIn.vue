@@ -3,7 +3,7 @@
     <div class="auth-block">
       <img id="logo" src="@/assets/logo.svg" alt="Logo"/>
       <div class="subtitle">BRVS Client</div>
-      <el-form :model="form" :rules="rules" ref="loginForm">
+      <el-form :model="form" :rules="rules" ref="loginForm" @keyup.enter.native="onSubmit">
         <el-form-item prop="username">
           <el-input
             name="username"

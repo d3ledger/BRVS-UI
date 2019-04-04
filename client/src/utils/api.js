@@ -1,13 +1,17 @@
 import axios from 'axios'
-import storageUtil from './storage-util'
 
 const API_URL = process.env.VUE_APP_API || 'http://localhost:8000/api'
+
+const CACHE = {
+  username: null,
+  token: null
+}
 
 const SERVER_AXIOS = axios.create({
   baseURL: API_URL,
   headers: {
     common: {
-      Authorization: `Bearer ${storageUtil.getItem('user-token')}`
+      Authorization: `Bearer ${CACHE.token}`
     }
   }
 })
@@ -15,28 +19,42 @@ const SERVER_AXIOS = axios.create({
 function handleError (err) {
   if (err.response && err.response.status === 401) {
     console.error('Error! Bad token.')
-    storageUtil.removeItem('token')
+
+    CACHE.username = null
+    CACHE.token = null
   }
   console.error(err)
   throw err
 }
 
-function setAuthHeader (token) {
-  storageUtil.setItem('token', token)
+function setAuthHeader ({ username, token }) {
+  CACHE.username = username
+  CACHE.token = token
+
   SERVER_AXIOS.defaults.headers.common['Authorization'] = `Bearer ${token}`
 }
 
 const isLoggedIn = () => {
-  return storageUtil.getItem('token') || ''
+  const validToken = !!CACHE.token
+  return validToken
 }
 
 const login = (axios) => (form) => {
   return axios.post('/login', form)
     .then(({ data }) => {
-      setAuthHeader(data.token)
+      setAuthHeader({
+        username: form.username,
+        token: data.token
+      })
       return data.token
     })
     .catch(e => handleError(e))
+}
+
+const logout = () => {
+  CACHE.username = null
+  CACHE.token = null
+  return Promise.resolve()
 }
 
 const getPendingTransactions = (axios) => () => {
@@ -49,5 +67,7 @@ export default {
   isLoggedIn,
 
   login: login(SERVER_AXIOS),
+  logout,
+
   getPendingTransactions: getPendingTransactions(SERVER_AXIOS)
 }

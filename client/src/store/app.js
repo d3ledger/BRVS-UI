@@ -74,6 +74,15 @@ const actions = {
         commit(types.SIGNIN_FAILURE, err)
         throw err
       })
+  },
+  logout ({ commit }) {
+    commit(types.LOGOUT_REQUEST)
+    return serverApi.logout()
+      .then(() => commit(types.LOGOUT_SUCCESS))
+      .catch(err => {
+        commit(types.LOGOUT_FAILURE, err)
+        throw err
+      })
   }
 }
 

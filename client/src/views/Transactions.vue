@@ -52,6 +52,14 @@ export default {
       search: ''
     }
   },
+  updated () {
+    if (this.pendingTransactions.length && !this.$route.params.id) {
+      const trxs = this.searchedTransaction
+      if (trxs.length) {
+        this.$router.push(`/transactions/${trxs[0].id}`)
+      }
+    }
+  },
   computed: {
     ...mapGetters([
       'pendingTransactions'

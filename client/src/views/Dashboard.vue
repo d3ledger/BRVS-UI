@@ -28,7 +28,6 @@
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
-import storageUtil from '@/utils/storage-util'
 
 export default {
   name: 'dashboard',
@@ -49,8 +48,10 @@ export default {
       'logout'
     ]),
     onLogout () {
-      storageUtil.removeItem('token')
-      this.$router.push('login')
+      this.logout()
+        .then(() => {
+          this.$router.push('login')
+        })
     }
   }
 }

@@ -75,6 +75,7 @@ func CorsMiddleware(next http.Handler) http.Handler {
 			w.Header().Set("Access-Control-Allow-Headers:", "Origin, Content-Type, X-Auth-Token, Authorization")
 			w.Header().Set("Content-Type", "application/json")
 			next.ServeHTTP(w, r)
+			return
 		}
 		next.ServeHTTP(w, r)
 	})

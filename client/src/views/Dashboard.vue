@@ -1,3 +1,7 @@
+<!--
+  Copyright Soramitsu Co., Ltd. All Rights Reserved.
+  SPDX-License-Identifier: Apache-2.0
+-->
 <template>
   <el-container id="app-container">
       <el-aside width="270px" id="side-menu">

@@ -1,3 +1,7 @@
+/*
+ * Copyright Soramitsu Co., Ltd. All Rights Reserved.
+ * SPDX-License-Identifier: Apache-2.0
+ */
 import axios from 'axios'
 
 const API_URL = process.env.VUE_APP_API || 'http://localhost:8000/api'
